@@ -70,6 +70,7 @@ public class UI implements ApplicationListener, Loadable{
     public MinimapDialog minimap;
     public SchematicsDialog schematics;
     public ModsDialog mods;
+    public PlayedWithDialong playedWith;
     public ColorPicker picker;
 
     public Cursor drillCursor, unloadCursor;
@@ -235,6 +236,7 @@ public class UI implements ApplicationListener, Loadable{
         tech = new TechTreeDialog();
         minimap = new MinimapDialog();
         mods = new ModsDialog();
+        playedWith = new PlayedWithDialong();
         schematics = new SchematicsDialog();
 
         Group group = Core.scene.root;

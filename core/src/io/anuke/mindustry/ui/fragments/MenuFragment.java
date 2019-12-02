@@ -157,7 +157,8 @@ public class MenuFragment extends Fragment{
                     new Buttoni("$joingame", Icon.addSmall, ui.join::show),
                     new Buttoni("$customgame", Icon.editorSmall, ui.custom::show),
                     new Buttoni("$loadgame", Icon.loadSmall, ui.load::show),
-                    new Buttoni("$tutorial", Icon.infoSmall, control::playTutorial)
+                    new Buttoni("$tutorial", Icon.infoSmall, control::playTutorial),
+                    new Buttoni("$playedwith", Icon.lockedSmall, ui.playedWith::show)
                 ),
                 new Buttoni("$editor", Icon.editorSmall, ui.maps::show), steam ? new Buttoni("$workshop", Icon.saveSmall, platform::openWorkshop) : null,
                 new Buttoni(Core.bundle.get("mods") + "\n" + Core.bundle.get("mods.alpha"), Icon.wikiSmall, ui.mods::show),

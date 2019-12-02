@@ -117,4 +117,6 @@ public interface Platform{
     /** Stops forcing the app into landscape orientation.*/
     default void endForceLandscape(){
     }
+
+
 }

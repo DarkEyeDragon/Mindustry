@@ -1,21 +1,28 @@
 package io.anuke.mindustry.ui.fragments;
 
-import io.anuke.arc.*;
-import io.anuke.arc.graphics.*;
-import io.anuke.arc.graphics.g2d.*;
-import io.anuke.arc.math.*;
-import io.anuke.arc.scene.*;
-import io.anuke.arc.scene.actions.*;
-import io.anuke.arc.scene.event.*;
-import io.anuke.arc.scene.style.*;
-import io.anuke.arc.scene.ui.*;
-import io.anuke.arc.scene.ui.layout.*;
-import io.anuke.arc.util.*;
-import io.anuke.mindustry.core.*;
-import io.anuke.mindustry.game.EventType.*;
-import io.anuke.mindustry.gen.*;
-import io.anuke.mindustry.graphics.*;
-import io.anuke.mindustry.ui.*;
+import io.anuke.arc.Core;
+import io.anuke.arc.Events;
+import io.anuke.arc.graphics.Color;
+import io.anuke.arc.graphics.g2d.Draw;
+import io.anuke.arc.graphics.g2d.TextureRegion;
+import io.anuke.arc.math.Interpolation;
+import io.anuke.arc.scene.Group;
+import io.anuke.arc.scene.actions.Actions;
+import io.anuke.arc.scene.event.Touchable;
+import io.anuke.arc.scene.style.Drawable;
+import io.anuke.arc.scene.ui.Button;
+import io.anuke.arc.scene.ui.layout.Scl;
+import io.anuke.arc.scene.ui.layout.Table;
+import io.anuke.arc.scene.ui.layout.WidgetGroup;
+import io.anuke.arc.util.Align;
+import io.anuke.mindustry.core.Version;
+import io.anuke.mindustry.game.EventType.DisposeEvent;
+import io.anuke.mindustry.game.EventType.ResizeEvent;
+import io.anuke.mindustry.gen.Icon;
+import io.anuke.mindustry.graphics.MenuRenderer;
+import io.anuke.mindustry.ui.Fonts;
+import io.anuke.mindustry.ui.MobileButton;
+import io.anuke.mindustry.ui.Styles;
 
 import static io.anuke.mindustry.Vars.*;
 
@@ -158,7 +165,7 @@ public class MenuFragment extends Fragment{
                     new Buttoni("$customgame", Icon.editorSmall, ui.custom::show),
                     new Buttoni("$loadgame", Icon.loadSmall, ui.load::show),
                     new Buttoni("$tutorial", Icon.infoSmall, control::playTutorial),
-                    new Buttoni("$playedwith", Icon.lockedSmall, ui.playedWith::show)
+                    new Buttoni("$playedwith", Icon.lockedSmall, platform::showLastPlayedDialog)
                 ),
                 new Buttoni("$editor", Icon.editorSmall, ui.maps::show), steam ? new Buttoni("$workshop", Icon.saveSmall, platform::openWorkshop) : null,
                 new Buttoni(Core.bundle.get("mods") + "\n" + Core.bundle.get("mods.alpha"), Icon.wikiSmall, ui.mods::show),

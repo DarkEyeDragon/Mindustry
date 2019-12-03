@@ -1,17 +1,17 @@
 package io.anuke.mindustry.core;
 
-import io.anuke.arc.*;
-import io.anuke.arc.Input.*;
-import io.anuke.arc.collection.*;
-import io.anuke.arc.files.*;
-import io.anuke.arc.func.*;
-import io.anuke.arc.math.*;
-import io.anuke.arc.scene.ui.*;
-import io.anuke.arc.util.serialization.*;
-import io.anuke.mindustry.net.*;
-import io.anuke.mindustry.net.Net.*;
-import io.anuke.mindustry.type.*;
-import io.anuke.mindustry.ui.dialogs.*;
+import io.anuke.arc.Core;
+import io.anuke.arc.Input.TextInput;
+import io.anuke.arc.collection.Array;
+import io.anuke.arc.files.FileHandle;
+import io.anuke.arc.func.Cons;
+import io.anuke.arc.math.RandomXS128;
+import io.anuke.arc.scene.ui.TextField;
+import io.anuke.arc.util.serialization.Base64Coder;
+import io.anuke.mindustry.net.ArcNetImpl;
+import io.anuke.mindustry.net.Net.NetProvider;
+import io.anuke.mindustry.type.Publishable;
+import io.anuke.mindustry.ui.dialogs.FileChooser;
 
 import static io.anuke.mindustry.Vars.mobile;
 
@@ -39,6 +39,11 @@ public interface Platform{
 
     /** Steam: Open workshop for maps.*/
     default void openWorkshop(){}
+
+    /**
+     * Steam: View recently played with
+     */
+    default void showLastPlayedDialog() {}
 
     /** Get the networking implementation.*/
     default NetProvider getNet(){

@@ -1,37 +1,53 @@
 package io.anuke.mindustry.desktop;
 
-import club.minnced.discord.rpc.*;
-import com.codedisaster.steamworks.*;
-import io.anuke.arc.*;
-import io.anuke.arc.Files.*;
-import io.anuke.arc.backends.sdl.*;
-import io.anuke.arc.backends.sdl.jni.*;
-import io.anuke.arc.collection.*;
-import io.anuke.arc.files.*;
-import io.anuke.arc.func.*;
-import io.anuke.arc.input.*;
-import io.anuke.arc.math.*;
-import io.anuke.arc.scene.event.*;
-import io.anuke.arc.scene.ui.*;
-import io.anuke.arc.util.*;
-import io.anuke.arc.util.Log.*;
-import io.anuke.arc.util.io.*;
-import io.anuke.arc.util.serialization.*;
-import io.anuke.mindustry.*;
-import io.anuke.mindustry.core.GameState.*;
+import club.minnced.discord.rpc.DiscordEventHandlers;
+import club.minnced.discord.rpc.DiscordRPC;
+import club.minnced.discord.rpc.DiscordRichPresence;
+import com.codedisaster.steamworks.SteamAPI;
+import com.codedisaster.steamworks.SteamFriends;
+import io.anuke.arc.ApplicationListener;
+import io.anuke.arc.Core;
+import io.anuke.arc.Events;
+import io.anuke.arc.Files.FileType;
+import io.anuke.arc.backends.sdl.SdlApplication;
+import io.anuke.arc.backends.sdl.SdlConfig;
+import io.anuke.arc.backends.sdl.jni.SDL;
+import io.anuke.arc.collection.Array;
+import io.anuke.arc.files.FileHandle;
+import io.anuke.arc.func.Cons;
+import io.anuke.arc.input.KeyCode;
+import io.anuke.arc.math.RandomXS128;
+import io.anuke.arc.scene.event.Touchable;
+import io.anuke.arc.scene.ui.Label;
+import io.anuke.arc.scene.ui.ScrollPane;
+import io.anuke.arc.scene.ui.layout.Table;
+import io.anuke.arc.util.Log;
+import io.anuke.arc.util.Log.LogHandler;
+import io.anuke.arc.util.OS;
+import io.anuke.arc.util.Strings;
+import io.anuke.arc.util.io.Streams;
+import io.anuke.arc.util.serialization.Base64Coder;
+import io.anuke.mindustry.ClientLauncher;
+import io.anuke.mindustry.Vars;
+import io.anuke.mindustry.core.GameState.State;
 import io.anuke.mindustry.core.Version;
 import io.anuke.mindustry.desktop.steam.*;
-import io.anuke.mindustry.game.EventType.*;
-import io.anuke.mindustry.mod.Mods.*;
-import io.anuke.mindustry.net.*;
-import io.anuke.mindustry.net.Net.*;
-import io.anuke.mindustry.type.*;
-import io.anuke.mindustry.ui.*;
+import io.anuke.mindustry.game.EventType.ClientLoadEvent;
+import io.anuke.mindustry.game.EventType.DisposeEvent;
+import io.anuke.mindustry.mod.Mods.ModLoadException;
+import io.anuke.mindustry.net.ArcNetImpl;
+import io.anuke.mindustry.net.CrashSender;
+import io.anuke.mindustry.net.Net.NetProvider;
+import io.anuke.mindustry.type.Publishable;
+import io.anuke.mindustry.ui.Styles;
+import io.anuke.mindustry.ui.dialogs.FloatingDialog;
 
-import java.io.*;
-import java.net.*;
-import java.nio.charset.*;
-import java.util.*;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.OutputStream;
+import java.net.NetworkInterface;
+import java.nio.charset.Charset;
+import java.util.Enumeration;
 
 import static io.anuke.mindustry.Vars.*;
 
@@ -338,6 +354,31 @@ public class DesktopLauncher extends ClientLauncher{
         DiscordRPC.INSTANCE.Discord_UpdatePresence(presence);
     }
 
+    @Override
+    public void showLastPlayedDialog(){
+        //TODO show proper error message
+        if(!steam) return;
+        SteamFriends friends = SVars.net.friends;
+        FloatingDialog dialog = new FloatingDialog("$stats.playedwith");
+        dialog.addCloseButton();
+        float h = Core.graphics.isPortrait() ? 90f : 80f;
+        float w = Core.graphics.isPortrait() ? 330f : 600f;
+
+        Table in = new Table();
+        ScrollPane pane = new ScrollPane(in);
+
+        for (int i = 0; i < friends.getFriendCount(SteamFriends.FriendFlags.All); i++) {
+            Table table = new Table();
+            table.margin(0);
+            table.add("Index: "+i).center();
+            in.add(table).size(w, h).padTop(5).row();
+        }
+        dialog.cont.add(pane).uniformX();
+        dialog.show();
+        //SVars.net.friends.activateGameOverlayToWebPage("https://steamcommunity.com/app/1127400/workshop/");
+
+        //SVars.net.friends.
+    }
     @Override
     public String getUUID(){
         if(steam){

@@ -84,6 +84,8 @@ public class Maps{
             maps.sort();
         });
 
+        Events.on(ContentReloadEvent.class, event -> reload());
+
         if(Core.assets != null){
             ((CustomLoader)Core.assets.getLoader(Content.class)).loaded = this::createAllPreviews;
         }
@@ -138,6 +140,17 @@ public class Maps{
                 Log.err(e);
             }
         }
+
+        //mod
+        mods.listFiles("maps", (mod, file) -> {
+            try{
+                Map map = loadMap(file, false);
+                map.mod = mod;
+            }catch(Exception e){
+                Log.err("Failed to load mod map file '{0}'!", file);
+                Log.err(e);
+            }
+        });
     }
 
     public void reload(){

@@ -59,7 +59,7 @@ import io.anuke.mindustry.ui.fragments.*;
 import static io.anuke.arc.scene.actions.Actions.*;
 import static io.anuke.mindustry.Vars.*;
 
-public class UI implements ApplicationListener, Loadable{
+public class UI implements ApplicationListener, Loadable {
     public MenuFragment menufrag;
     public HudFragment hudfrag;
     public ChatFragment chatfrag;
@@ -92,20 +92,21 @@ public class UI implements ApplicationListener, Loadable{
     public SchematicsDialog schematics;
     public ModsDialog mods;
     public ColorPicker picker;
+    public UploadDialog uploadDialog;
 
     public Cursor drillCursor, unloadCursor;
 
-    public UI(){
+    public UI() {
         setupFonts();
     }
 
     @Override
-    public void loadAsync(){
+    public void loadAsync() {
 
     }
 
     @Override
-    public void loadSync(){
+    public void loadSync() {
         Fonts.outline.getData().markupEnabled = true;
         Fonts.def.getData().markupEnabled = true;
         Fonts.def.setOwnsTexture(false);
@@ -139,12 +140,14 @@ public class UI implements ApplicationListener, Loadable{
     }
 
     @Override
-    public Array<AssetDescriptor> getDependencies(){
+    public Array<AssetDescriptor> getDependencies() {
         return Array.with(new AssetDescriptor<>(Control.class), new AssetDescriptor<>("outline", BitmapFont.class), new AssetDescriptor<>("default", BitmapFont.class), new AssetDescriptor<>("chat", BitmapFont.class));
     }
 
-    /** Called from a static context to make the cursor appear immediately upon startup.*/
-    public static void loadSystemCursors(){
+    /**
+     * Called from a static context to make the cursor appear immediately upon startup.
+     */
+    public static void loadSystemCursors() {
         SystemCursor.arrow.set(Core.graphics.newCursor("cursor"));
         SystemCursor.hand.set(Core.graphics.newCursor("hand"));
         SystemCursor.ibeam.set(Core.graphics.newCursor("ibeam"));
@@ -152,14 +155,16 @@ public class UI implements ApplicationListener, Loadable{
         Core.graphics.restoreCursor();
     }
 
-    /** Called from a static context for use in the loading screen.*/
-    public static void loadDefaultFont(){
+    /**
+     * Called from a static context for use in the loading screen.
+     */
+    public static void loadDefaultFont() {
         FileHandleResolver resolver = new InternalFileHandleResolver();
         Core.assets.setLoader(FreeTypeFontGenerator.class, new FreeTypeFontGeneratorLoader(resolver));
-        Core.assets.setLoader(BitmapFont.class, null, new FreetypeFontLoader(resolver){
+        Core.assets.setLoader(BitmapFont.class, null, new FreetypeFontLoader(resolver) {
             @Override
-            public BitmapFont loadSync(AssetManager manager, String fileName, FileHandle file, FreeTypeFontLoaderParameter parameter){
-                if(fileName.equals("outline")){
+            public BitmapFont loadSync(AssetManager manager, String fileName, FileHandle file, FreeTypeFontLoaderParameter parameter) {
+                if (fileName.equals("outline")) {
                     parameter.fontParameters.borderWidth = Scl.scl(2f);
                     parameter.fontParameters.spaceX -= parameter.fontParameters.borderWidth;
                 }
@@ -170,31 +175,31 @@ public class UI implements ApplicationListener, Loadable{
             }
         });
 
-        FreeTypeFontParameter param = new FreeTypeFontParameter(){{
+        FreeTypeFontParameter param = new FreeTypeFontParameter() {{
             borderColor = Color.darkGray;
             incremental = true;
         }};
 
-        Core.assets.load("outline", BitmapFont.class, new FreeTypeFontLoaderParameter("fonts/font.ttf", param)).loaded = t -> Fonts.outline = (BitmapFont)t;
+        Core.assets.load("outline", BitmapFont.class, new FreeTypeFontLoaderParameter("fonts/font.ttf", param)).loaded = t -> Fonts.outline = (BitmapFont) t;
     }
 
-    void loadExtraCursors(){
+    void loadExtraCursors() {
         drillCursor = Core.graphics.newCursor("drill");
         unloadCursor = Core.graphics.newCursor("unload");
     }
 
-    public void setupFonts(){
+    public void setupFonts() {
         String fontName = "fonts/font.ttf";
 
         FreeTypeFontParameter param = fontParameter();
 
-        Core.assets.load("default", BitmapFont.class, new FreeTypeFontLoaderParameter(fontName, param)).loaded = f -> Fonts.def = (BitmapFont)f;
-        Core.assets.load("chat", BitmapFont.class, new FreeTypeFontLoaderParameter(fontName, param)).loaded = f -> Fonts.chat = (BitmapFont)f;
+        Core.assets.load("default", BitmapFont.class, new FreeTypeFontLoaderParameter(fontName, param)).loaded = f -> Fonts.def = (BitmapFont) f;
+        Core.assets.load("chat", BitmapFont.class, new FreeTypeFontLoaderParameter(fontName, param)).loaded = f -> Fonts.chat = (BitmapFont) f;
     }
 
-    static FreeTypeFontParameter fontParameter(){
-        return new FreeTypeFontParameter(){{
-            size = (int)(Scl.scl(18f));
+    static FreeTypeFontParameter fontParameter() {
+        return new FreeTypeFontParameter() {{
+            size = (int) (Scl.scl(18f));
             shadowColor = Color.darkGray;
             shadowOffsetY = 2;
             incremental = true;
@@ -202,28 +207,28 @@ public class UI implements ApplicationListener, Loadable{
     }
 
     @Override
-    public void update(){
-        if(disableUI || Core.scene == null) return;
+    public void update() {
+        if (disableUI || Core.scene == null) return;
 
         Core.scene.act();
         Core.scene.draw();
 
-        if(Core.input.keyTap(KeyCode.MOUSE_LEFT) && Core.scene.getKeyboardFocus() instanceof TextField){
+        if (Core.input.keyTap(KeyCode.MOUSE_LEFT) && Core.scene.getKeyboardFocus() instanceof TextField) {
             Element e = Core.scene.hit(Core.input.mouseX(), Core.input.mouseY(), true);
-            if(!(e instanceof TextField)){
+            if (!(e instanceof TextField)) {
                 Core.scene.setKeyboardFocus(null);
             }
         }
 
         //draw overlay for buttons
-        if(state.rules.tutorial){
+        if (state.rules.tutorial) {
             control.tutorial.draw();
             Draw.flush();
         }
     }
 
     @Override
-    public void init(){
+    public void init() {
         menuGroup = new WidgetGroup();
         hudGroup = new WidgetGroup();
 
@@ -257,6 +262,7 @@ public class UI implements ApplicationListener, Loadable{
         minimap = new MinimapDialog();
         mods = new ModsDialog();
         schematics = new SchematicsDialog();
+        uploadDialog = new UploadDialog();
 
         Group group = Core.scene.root;
 
@@ -279,22 +285,22 @@ public class UI implements ApplicationListener, Loadable{
     }
 
     @Override
-    public void resize(int width, int height){
-        if(Core.scene == null) return;
+    public void resize(int width, int height) {
+        if (Core.scene == null) return;
         Core.scene.resize(width, height);
         Events.fire(new ResizeEvent());
     }
 
     @Override
-    public void dispose(){
+    public void dispose() {
         //generator.dispose();
     }
 
-    public void loadAnd(Runnable call){
+    public void loadAnd(Runnable call) {
         loadAnd("$loading", call);
     }
 
-    public void loadAnd(String text, Runnable call){
+    public void loadAnd(String text, Runnable call) {
         loadfrag.show(text);
         Time.runTask(7f, () -> {
             call.run();
@@ -302,20 +308,21 @@ public class UI implements ApplicationListener, Loadable{
         });
     }
 
-    public void showTextInput(String titleText, String dtext, int textLength, String def, boolean inumeric, Cons<String> confirmed){
-        if(mobile){
-            Core.input.getTextInput(new TextInput(){{
+    public void showTextInput(String titleText, String dtext, int textLength, String def, boolean inumeric, Cons<String> confirmed) {
+        if (mobile) {
+            Core.input.getTextInput(new TextInput() {{
                 this.title = (titleText.startsWith("$") ? Core.bundle.get(titleText.substring(1)) : titleText);
                 this.text = def;
                 this.numeric = inumeric;
                 this.maxLength = textLength;
                 this.accepted = confirmed;
             }});
-        }else{
-            new Dialog(titleText){{
+        } else {
+            new Dialog(titleText) {{
                 cont.margin(30).add(dtext).padRight(6f);
                 TextFieldFilter filter = inumeric ? TextFieldFilter.digitsOnly : (f, c) -> true;
-                TextField field = cont.addField(def, t -> {}).size(330f, 50f).get();
+                TextField field = cont.addField(def, t -> {
+                }).size(330f, 50f).get();
                 field.setFilter((f, c) -> field.getText().length() < textLength && filter.acceptChar(f, c));
                 buttons.defaults().size(120, 54).pad(4);
                 buttons.addButton("$ok", () -> {
@@ -327,15 +334,15 @@ public class UI implements ApplicationListener, Loadable{
         }
     }
 
-    public void showTextInput(String title, String text, String def, Cons<String> confirmed){
+    public void showTextInput(String title, String text, String def, Cons<String> confirmed) {
         showTextInput(title, text, 32, def, confirmed);
     }
 
-    public void showTextInput(String titleText, String text, int textLength, String def, Cons<String> confirmed){
+    public void showTextInput(String titleText, String text, int textLength, String def, Cons<String> confirmed) {
         showTextInput(titleText, text, textLength, def, false, confirmed);
     }
 
-    public void showInfoFade(String info){
+    public void showInfoFade(String info) {
         Table table = new Table();
         table.setFillParent(true);
         table.actions(Actions.fadeOut(7f, Interpolation.fade), Actions.remove());
@@ -343,16 +350,16 @@ public class UI implements ApplicationListener, Loadable{
         Core.scene.add(table);
     }
 
-    public void showInfo(String info){
-        new Dialog(""){{
+    public void showInfo(String info) {
+        new Dialog("") {{
             getCell(cont).growX();
             cont.margin(15).add(info).width(400f).wrap().get().setAlignment(Align.center, Align.center);
             buttons.addButton("$ok", this::hide).size(90, 50).pad(4);
         }}.show();
     }
 
-    public void showErrorMessage(String text){
-        new Dialog(""){{
+    public void showErrorMessage(String text) {
+        new Dialog("") {{
             setFillParent(true);
             cont.margin(15f);
             cont.add("$error.title");
@@ -365,13 +372,13 @@ public class UI implements ApplicationListener, Loadable{
         }}.show();
     }
 
-    public void showException(Throwable t){
+    public void showException(Throwable t) {
         showException("", t);
     }
 
-    public void showException(String text, Throwable exc){
+    public void showException(String text, Throwable exc) {
         loadfrag.hide();
-        new Dialog(""){{
+        new Dialog("") {{
             String message = Strings.getFinalMesage(exc);
 
             setFillParent(true);
@@ -392,12 +399,12 @@ public class UI implements ApplicationListener, Loadable{
         }}.show();
     }
 
-    public void showText(String titleText, String text){
+    public void showText(String titleText, String text) {
         showText(titleText, text, Align.center);
     }
 
-    public void showText(String titleText, String text, int align){
-        new Dialog(titleText){{
+    public void showText(String titleText, String text, int align) {
+        new Dialog(titleText) {{
             cont.row();
             cont.addImage().width(400f).pad(2).colspan(2).height(4f).color(Pal.accent);
             cont.row();
@@ -407,15 +414,15 @@ public class UI implements ApplicationListener, Loadable{
         }}.show();
     }
 
-    public void showInfoText(String titleText, String text){
-        new Dialog(titleText){{
+    public void showInfoText(String titleText, String text) {
+        new Dialog(titleText) {{
             cont.margin(15).add(text).width(400f).wrap().left().get().setAlignment(Align.left, Align.left);
             buttons.addButton("$ok", this::hide).size(90, 50).pad(4);
         }}.show();
     }
 
-    public void showSmall(String titleText, String text){
-        new Dialog(titleText){{
+    public void showSmall(String titleText, String text) {
+        new Dialog(titleText) {{
             cont.margin(10).add(text);
             titleTable.row();
             titleTable.addImage().color(Pal.accent).height(3f).growX().pad(2f);
@@ -423,11 +430,11 @@ public class UI implements ApplicationListener, Loadable{
         }}.show();
     }
 
-    public void showConfirm(String title, String text, Runnable confirmed){
+    public void showConfirm(String title, String text, Runnable confirmed) {
         showConfirm(title, text, null, confirmed);
     }
 
-    public void showConfirm(String title, String text, Boolp hide, Runnable confirmed){
+    public void showConfirm(String title, String text, Boolp hide, Runnable confirmed) {
         FloatingDialog dialog = new FloatingDialog(title);
         dialog.cont.add(text).width(mobile ? 400f : 500f).wrap().pad(4f).get().setAlignment(Align.center, Align.center);
         dialog.buttons.defaults().size(200f, 54f).pad(2f);
@@ -437,9 +444,9 @@ public class UI implements ApplicationListener, Loadable{
             dialog.hide();
             confirmed.run();
         });
-        if(hide != null){
+        if (hide != null) {
             dialog.update(() -> {
-                if(hide.get()){
+                if (hide.get()) {
                     dialog.hide();
                 }
             });
@@ -450,7 +457,7 @@ public class UI implements ApplicationListener, Loadable{
     }
 
 
-    public void showCustomConfirm(String title, String text, String yes, String no, Runnable confirmed, Runnable denied){
+    public void showCustomConfirm(String title, String text, String yes, String no, Runnable confirmed, Runnable denied) {
         FloatingDialog dialog = new FloatingDialog(title);
         dialog.cont.add(text).width(mobile ? 400f : 500f).wrap().pad(4f).get().setAlignment(Align.center, Align.center);
         dialog.buttons.defaults().size(200f, 54f).pad(2f);
@@ -468,7 +475,7 @@ public class UI implements ApplicationListener, Loadable{
         dialog.show();
     }
 
-    public void showOkText(String title, String text, Runnable confirmed){
+    public void showOkText(String title, String text, Runnable confirmed) {
         FloatingDialog dialog = new FloatingDialog(title);
         dialog.cont.add(text).width(500f).wrap().pad(4f).get().setAlignment(Align.center, Align.center);
         dialog.buttons.defaults().size(200f, 54f).pad(2f);
@@ -480,14 +487,14 @@ public class UI implements ApplicationListener, Loadable{
         dialog.show();
     }
 
-    public String formatAmount(int number){
-        if(number >= 1000000){
+    public String formatAmount(int number) {
+        if (number >= 1000000) {
             return Strings.fixed(number / 1000000f, 1) + "[gray]" + Core.bundle.getOrNull("unit.millions") + "[]";
-        }else if(number >= 10000){
+        } else if (number >= 10000) {
             return number / 1000 + "[gray]k[]";
-        }else if(number >= 1000){
+        } else if (number >= 1000) {
             return Strings.fixed(number / 1000f, 1) + "[gray]" + Core.bundle.getOrNull("unit.thousands") + "[]";
-        }else{
+        } else {
             return number + "";
         }
     }

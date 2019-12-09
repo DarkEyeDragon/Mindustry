@@ -165,6 +165,7 @@ public class MenuFragment extends Fragment{
                     new Buttoni("$customgame", Icon.editorSmall, ui.custom::show),
                     new Buttoni("$loadgame", Icon.loadSmall, ui.load::show),
                     new Buttoni("$tutorial", Icon.infoSmall, control::playTutorial),
+                    new Buttoni("$upload", Icon.loadSmall, ui.uploadDialog::show),
                     new Buttoni("$playedwith", Icon.lockedSmall, platform::showLastPlayedDialog)
                 ),
                 new Buttoni("$editor", Icon.editorSmall, ui.maps::show), steam ? new Buttoni("$workshop", Icon.saveSmall, platform::openWorkshop) : null,
